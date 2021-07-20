@@ -340,3 +340,5 @@ BCA.DVRService/BCA.DVRService.MOTConsumer.FunctionApp/Properties/ServiceDependen
 BCA.DVRService/BCA.DVRService.HPIConsumer.FunctionApp/Properties/ServiceDependencies/BCA-DVR-POC-HpiConsumer - Web Deploy/
 BCA.DVRService/BCA.DVRService.ACSAssessmentConsumer.FunctionApp/Properties/ServiceDependencies/BCA-DVR-POC-AssessmentConsumer - Web Deploy/
 .vscode/
+
+
