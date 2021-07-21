@@ -47,13 +47,13 @@ namespace Tweetbook
 
             var swaggerOptions = new Tweetbook.Options.SwaggerOptions();
             Configuration.GetSection(nameof(swaggerOptions)).Bind(swaggerOptions);
-            app.UseSwagger(option =>
+            app.UseSwagger(options =>
             {
-                option.RouteTemplate = swaggerOptions.JsonRoute;
+                options.RouteTemplate = swaggerOptions.JsonRoute;
             });
-            app.UseSwaggerUI(option =>
+            app.UseSwaggerUI(options =>
             {
-                option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
+                options.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
             });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
