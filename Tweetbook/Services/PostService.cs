@@ -5,11 +5,11 @@ using Tweetbook.Domain;
 
 namespace Tweetbook.Services
 {
-    public class _postService : IPostService
+    public class PostService : IPostService
     {
         private readonly List<Post> _posts;
 
-        public _postService()
+        public PostService()
         {
             _posts = new List<Post>();
 
@@ -32,6 +32,19 @@ namespace Tweetbook.Services
         public Post GetPostById(Guid postId)
         {
             return _posts.SingleOrDefault(current_post => current_post.Id == postId);
+        }
+
+        public bool UpdatePost(Post postToUpdate)
+        {
+            var exists = GetPostById(postToUpdate.Id) != null;
+
+            if (!exists)
+                return false;
+
+            var index = _posts.FindIndex(current_post => current_post.Id == postToUpdate.Id);
+            _posts[index] = postToUpdate;
+
+            return true;
         }
     }
 }
