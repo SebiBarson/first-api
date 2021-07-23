@@ -48,7 +48,11 @@ namespace Tweetbook.Controllers.V1
             if (updated)
                 return Ok(post);
 
-            return NotFound();
+            _postService.GetPosts().Add(post);
+            var baseUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.ToUriComponent();
+            var uriLocation = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
+            var response = new PostResponse { Id = post.Id };
+            return Created(uriLocation, response);
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]
