@@ -10,7 +10,7 @@ namespace Tweetbook.Domain
         public Guid Value { get; set; }
         public PostId(Guid val)
         {
-            this.Value = val;
+            Value = val;
         }
 
         public static implicit operator PostId(Guid val) => new PostId(val);
