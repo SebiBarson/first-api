@@ -46,5 +46,17 @@ namespace Tweetbook.Services
 
             return true;
         }
+
+        public bool DeletePost(Guid postId)
+        {
+            var exists = GetPostById(postId) != null;
+
+            if (!exists)
+                return false;
+
+            _posts.Remove(GetPostById(postId));
+
+            return true;
+        }
     }
 }
