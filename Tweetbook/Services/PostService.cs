@@ -31,7 +31,7 @@ namespace Tweetbook.Services
 
         public Post GetPostById(Guid postId)
         {
-            return _posts.SingleOrDefault(x => x.Id == postId);
+            return _posts.SingleOrDefault(current_post => current_post.Id == postId);
         }
     }
 }
