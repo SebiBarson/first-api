@@ -69,7 +69,7 @@ namespace Tweetbook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.CreateEndpoint)]
         public IActionResult Create([FromBody] CreatePostRequest postRequest)
         {
-            var post = new Post { Id = postRequest.Id };
+            var post = new Post { Id = postRequest.Id, Name = postRequest.Name };
 
             if (post.Id != Guid.Empty)
                 post.Id = Guid.NewGuid();
