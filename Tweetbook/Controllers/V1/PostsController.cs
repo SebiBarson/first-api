@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Requests;
 using Tweetbook.Contracts.V1.Responses;
@@ -18,15 +19,15 @@ namespace Tweetbook.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_postService.GetPosts());
+            return Ok(await _postService.GetPostsAsync());
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
-        public IActionResult Get([FromRoute] Guid postId)
+        public async Task<IActionResult> Get([FromRoute] Guid postId)
         {
-            var post = _postService.GetPostById(postId);
+            var post = await _postService.GetPostByIdAsync(postId);
 
             if (post == null)
                 return NotFound();
@@ -35,7 +36,7 @@ namespace Tweetbook.Controllers.V1
         }
 
         [HttpPut(ApiRoutes.Posts.Update)]
-        public IActionResult Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
         {
             var post = new Post
             {
@@ -43,22 +44,14 @@ namespace Tweetbook.Controllers.V1
                 Name = request.Name
             };
 
-            var updated = _postService.UpdatePost(post);
-
-            if (updated)
-                return Ok(post);
-
-            _postService.GetPosts().Add(post);
-            var baseUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.ToUriComponent();
-            var uriLocation = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
-            var response = new PostResponse { Id = post.Id };
-            return Created(uriLocation, response);
+            var updated = await _postService.UpdatePostAsync(post);
+            return Ok(post);
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]
-        public IActionResult Delete([FromRoute] Guid postId)
+        public async Task<IActionResult> Delete([FromRoute] Guid postId)
         {
-            var deleted = _postService.DeletePost(postId);
+            var deleted = await _postService.DeletePostAsync(postId);
 
             if (deleted)
                 return NoContent();
@@ -66,15 +59,12 @@ namespace Tweetbook.Controllers.V1
             return NotFound();
         }
 
-        [HttpPost(ApiRoutes.Posts.CreateEndpoint)]
-        public IActionResult Create([FromBody] CreatePostRequest postRequest)
+        [HttpPost(ApiRoutes.Posts.Create)]
+        public async Task<IActionResult> Create([FromBody] CreatePostRequest postRequest)
         {
-            var post = new Post { Id = postRequest.Id, Name = postRequest.Name };
+            var post = new Post { Name = postRequest.Name };
 
-            if (post.Id != Guid.Empty)
-                post.Id = Guid.NewGuid();
-
-            _postService.GetPosts().Add(post);
+            await _postService.CreatePostAsync(post);
 
             var baseUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.ToUriComponent();
             var uriLocation = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
