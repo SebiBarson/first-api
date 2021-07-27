@@ -20,13 +20,15 @@ namespace Tweetbook.Services
             _userManager = userManager;
             _jwtSettings = jwtSettings;
         }
+
         public async Task<AuthenticationResult> RegisterAsync(string email, string password)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
             if (existingUser != null)
             {
-                return new AuthenticationResult{
+                return new AuthenticationResult
+                {
                     Errors = new[] { "Email address already in use" }
                 };
             }
@@ -39,11 +41,40 @@ namespace Tweetbook.Services
 
             var createdUser = await _userManager.CreateAsync(newUser, password);
 
-            if(createdUser.Succeeded == false)
+            if (createdUser.Succeeded == false)
             {
                 return new AuthenticationResult { Errors = createdUser.Errors.Select(error => error.Description) };
             }
 
+            return GenerateAuthenticationToken(newUser);
+        }
+        public async Task<AuthenticationResult> LoginAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new AuthenticationResult
+                {
+                    Errors = new[] { "User does not exist" }
+                };
+            }
+
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!userHasValidPassword)
+            {
+                return new AuthenticationResult
+                {
+                    Errors = new[] { "User/password combination incorrect" }
+                };
+            }
+
+            return GenerateAuthenticationToken(user);
+        }
+
+        private AuthenticationResult GenerateAuthenticationToken(IdentityUser newUser)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
