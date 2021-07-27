@@ -63,7 +63,7 @@ namespace Tweetbook.Services
             return new AuthenticationResult
             {
                 Success = true,
-                Errors = createdUser.Errors.Select(error => error.Description)
+                Token = tokenHandler.WriteToken(token)
             };
         }
     }

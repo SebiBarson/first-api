@@ -23,14 +23,24 @@ namespace Tweetbook.Services
         }
         public async Task<Post> GetPostByIdAsync(Guid postId)
         {
-            return await _dataContext.Posts.SingleOrDefaultAsync(current_post => current_post.Id == postId);
+            return await _dataContext.Posts.AsNoTracking().SingleOrDefaultAsync(current_post => current_post.Id == postId);
         }
 
         public async Task<bool> UpdatePostAsync(Post postToUpdate)
         {
-            _dataContext.Posts.Update(postToUpdate);
-            var updated = await _dataContext.SaveChangesAsync();
-            return true;
+            var temp = await GetPostByIdAsync(postToUpdate.Id);
+            if(temp != null)
+            {
+                //temp.Name = postToUpdate.Name;
+                _dataContext.Update(postToUpdate);
+                var updated = await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return await CreatePostAsync(postToUpdate);
+            }
+
         }
 
         public async Task<bool> DeletePostAsync(Guid postId)
