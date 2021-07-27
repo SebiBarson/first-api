@@ -336,3 +336,4 @@ dotnet-tools.json
 *.tfvars.json
 
 *.db
+Tweetbook/sqLiteDB.db
