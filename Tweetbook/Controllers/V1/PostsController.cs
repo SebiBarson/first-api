@@ -42,7 +42,7 @@ namespace Tweetbook.Controllers.V1
         [HttpPut(ApiRoutes.Posts.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
         {
-            var userOwnsPost = await _postService.UserOwnsPost(postId, HttpContext.GetUserId());
+            var userOwnsPost = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
 
             if (!userOwnsPost)
                 return BadRequest(new { error = "You don't own this post" });
@@ -52,7 +52,6 @@ namespace Tweetbook.Controllers.V1
                 Id = postId,
                 Name = request.Name
             };
-
             var updated = await _postService.UpdatePostAsync(post);
             return Ok(post);
         }
@@ -60,7 +59,7 @@ namespace Tweetbook.Controllers.V1
         [HttpDelete(ApiRoutes.Posts.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid postId)
         {
-            var userOwnsPost = await _postService.UserOwnsPost(postId, HttpContext.GetUserId());
+            var userOwnsPost = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
 
             if (!userOwnsPost)
                 return BadRequest(new { error = "You don't own this post" });
