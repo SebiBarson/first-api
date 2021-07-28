@@ -15,7 +15,7 @@ namespace Tweetbook.Installers
                 options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<DataContext>();
 
-            //services.AddSingleton<IPostService, _postService>();  //doesn't seem necessary, at least yet
+            services.AddScoped<IPostService, PostService>();
         }
     }
 }
