@@ -32,7 +32,7 @@ namespace Tweetbook.Controllers.V1
 
             if (!authResponse.Success)
             {
-                return BadRequest(new AuthFailedResponse
+                return new BadRequestObjectResult(new AuthFailedResponse
                 {
                     Errors = authResponse.Errors
                 });
@@ -44,9 +44,27 @@ namespace Tweetbook.Controllers.V1
         }
 
         [HttpPost(ApiRoutes.Identity.Login)]
-        public async Task<IActionResult> LoginAsync([FromBody] UserRegistrationRequest request)
+        public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
         {
             var authResponse = await _identityService.LoginAsync(request.Email, request.Password);
+
+            if (!authResponse.Success)
+            {
+                return new BadRequestObjectResult(new AuthFailedResponse
+                {
+                    Errors = authResponse.Errors
+                });
+            }
+            return Ok(new AuthSuccessResponse
+            {
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
+            });
+        }
+        [HttpPost(ApiRoutes.Identity.Refresh)]
+        public async Task<IActionResult> RefreshAsync([FromBody] RefreshTokenRequest request)
+        {
+            var authResponse = await _identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
 
             if (!authResponse.Success)
             {
@@ -57,7 +75,8 @@ namespace Tweetbook.Controllers.V1
             }
             return Ok(new AuthSuccessResponse
             {
-                Token = authResponse.Token
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
             });
         }
     }
