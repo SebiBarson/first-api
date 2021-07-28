@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Data;
 using Tweetbook.Domain;
-using static Tweetbook.Contracts.V1.ApiRoutes;
 
 namespace Tweetbook.Services
 {
@@ -29,7 +26,7 @@ namespace Tweetbook.Services
         public async Task<bool> UpdatePostAsync(Post postToUpdate)
         {
             var temp = await GetPostByIdAsync(postToUpdate.Id);
-            if(temp != null)
+            if (temp != null)
             {
                 //temp.Name = postToUpdate.Name;
                 _dataContext.Update(postToUpdate);

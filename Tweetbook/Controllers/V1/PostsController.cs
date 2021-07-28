@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -7,8 +7,8 @@ using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Requests;
 using Tweetbook.Contracts.V1.Responses;
 using Tweetbook.Domain;
-using Tweetbook.Services;
 using Tweetbook.Extensions;
+using Tweetbook.Services;
 
 namespace Tweetbook.Controllers.V1
 {
@@ -82,7 +82,7 @@ namespace Tweetbook.Controllers.V1
                 Name = postRequest.Name
             };
 
-            await _postService.CreatePostAsync(post); 
+            await _postService.CreatePostAsync(post);
             var response = new PostResponse { Id = post.Id };
             return Created(UriLocation(post), response);
         }

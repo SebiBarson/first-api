@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tweetbook.Contracts.V1.Requests
+﻿namespace Tweetbook.Contracts.V1.Requests
 {
     public class CreatePostRequest
     {

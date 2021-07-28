@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
@@ -28,11 +26,11 @@ namespace Tweetbook.Controllers.V1
                 {
                     Errors = ModelState.Values.SelectMany(value => value.Errors.Select(error => error.ErrorMessage))
                 });
-            } 
+            }
 
             var authResponse = await _identityService.RegisterAsync(request.Email, request.Password);
-            
-            if(!authResponse.Success)
+
+            if (!authResponse.Success)
             {
                 return BadRequest(new AuthFailedResponse
                 {
