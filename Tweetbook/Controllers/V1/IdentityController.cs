@@ -32,7 +32,7 @@ namespace Tweetbook.Controllers.V1
 
             if (!authResponse.Success)
             {
-                return new BadRequestObjectResult(new AuthFailedResponse
+                return BadRequest(new AuthFailedResponse
                 {
                     Errors = authResponse.Errors
                 });
@@ -50,7 +50,7 @@ namespace Tweetbook.Controllers.V1
 
             if (!authResponse.Success)
             {
-                return new BadRequestObjectResult(new AuthFailedResponse
+                return BadRequest(new AuthFailedResponse
                 {
                     Errors = authResponse.Errors
                 });

@@ -45,11 +45,11 @@ namespace Tweetbook.Installers
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Title", Version = "v1" });
 
-                var security = new Dictionary<string, IEnumerable<string>>
+                /*var security = new Dictionary<string, IEnumerable<string>>
                 {
                     {"Bearer", new string[0] }
-                };
-                x.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme()
+                };*/
+                x.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the bearer scheme",
                     Name = "Authorization",
