@@ -25,7 +25,7 @@ namespace Tweetbook.IntegrationTests
                 {
                     builder.ConfigureServices(services =>
                     {
-                        services.RemoveAll(typeof(DataContext));
+                        services.RemoveAll(typeof(DbContextOptions<DataContext>));
                         services.AddDbContext<DataContext>(options => { options.UseInMemoryDatabase("TestDb"); });
                     });
                 });
