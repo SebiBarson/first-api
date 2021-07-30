@@ -334,11 +334,6 @@ dotnet-tools.json
 .build/terraform/mongoDB/.terraform
 *.backup
 *.tfvars.json
-BCA.DVRService/BCA.DVRService.Vehicles.API/BCA.DVRService.Vehicles.API.xml
-/BCA.DVRService/BCA.DVRService.ACSConsumer.FunctionApp/Properties/ServiceDependencies/BCA-DVR-POC-VehicleConsumer - Web Deploy
-BCA.DVRService/BCA.DVRService.MOTConsumer.FunctionApp/Properties/ServiceDependencies/BCA-DVR-POC-MotConsumer - Web Deploy/
-BCA.DVRService/BCA.DVRService.HPIConsumer.FunctionApp/Properties/ServiceDependencies/BCA-DVR-POC-HpiConsumer - Web Deploy/
-BCA.DVRService/BCA.DVRService.ACSAssessmentConsumer.FunctionApp/Properties/ServiceDependencies/BCA-DVR-POC-AssessmentConsumer - Web Deploy/
-.vscode/
 
-
+*.db
+Tweetbook/sqLiteDB.db

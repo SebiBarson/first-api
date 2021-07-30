@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity;
 using Tweetbook.Domain;
 
 namespace Tweetbook.Data
@@ -12,6 +11,7 @@ namespace Tweetbook.Data
         {
         }
 
-        public Microsoft.EntityFrameworkCore.DbSet<Post> Posts { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
