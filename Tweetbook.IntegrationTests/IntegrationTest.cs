@@ -14,7 +14,7 @@ using Tweetbook.Data;
 
 namespace Tweetbook.IntegrationTests
 {
-    public class IntegrationTest
+    public class IntegrationTest : IDisposable
     {
         protected readonly HttpClient TestClient;
         private readonly IServiceProvider serviceProvider;
