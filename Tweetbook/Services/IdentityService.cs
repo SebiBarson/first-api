@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -40,18 +41,25 @@ namespace Tweetbook.Services
                 };
             }
 
+            var newUserId = Guid.NewGuid();
             var newUser = new IdentityUser
             {
+                Id = newUserId.ToString(),
                 Email = email,
                 UserName = email
             };
 
+
             var createdUser = await _userManager.CreateAsync(newUser, password);
+
+            await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
 
             if (createdUser.Succeeded == false)
             {
                 return new AuthenticationResult { Errors = createdUser.Errors.Select(error => error.Description) };
             }
+
+            await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
 
             return await GenerateAuthenticationToken(newUser);
         }
@@ -84,15 +92,19 @@ namespace Tweetbook.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
+            var claims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim("id", user.Id)
-                }),
+                };
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            claims.AddRange(userClaims);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
