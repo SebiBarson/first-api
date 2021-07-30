@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Requests;
@@ -15,11 +16,13 @@ namespace Tweetbook.Controllers.V1
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PostsController : Controller
     {
-        private IPostService _postService;
+        private readonly IPostService _postService;
+        private readonly ITagService _tagService;
 
-        public PostsController(IPostService postService)
+        public PostsController(IPostService postService, ITagService tagService)
         {
             _postService = postService;
+            _tagService = tagService;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
@@ -75,6 +78,14 @@ namespace Tweetbook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public async Task<IActionResult> Create([FromBody] CreatePostRequest postRequest)
         {
+            var tags = new List<Tag>();
+            foreach (string tagName in postRequest.Tags)
+            {
+                Tag tag = new() { Name = tagName, CreatedOn = DateTime.Now, CreatorId = HttpContext.GetUserId() };
+                tags.Add(tag);
+                await _tagService.CreateTagAsync(tag);
+            }
+
             var post = new Post
             {
                 UserId = HttpContext.GetUserId(),
@@ -82,6 +93,12 @@ namespace Tweetbook.Controllers.V1
             };
 
             await _postService.CreatePostAsync(post);
+
+            foreach (Tag tag in tags)
+            {
+                await _tagService.CreatePost_TagAsync(new PostTag { PostId = post.Id, TagId = tag.Id });
+            }
+
             var response = new PostResponse { Id = post.Id };
             return Created(UriLocation(post), response);
         }
