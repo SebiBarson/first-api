@@ -17,9 +17,14 @@ namespace Tweetbook.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tags.GetAll)]
+        [Authorize(Policy = "TagViewer")]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _tagService.GetAllTagsAsync());
+        }
+        public IActionResult Ping()
+        {
+            return Ok("pong");
         }
     }
 }
