@@ -14,6 +14,7 @@ namespace Tweetbook.IntegrationTests
 {
     public class PostsControllerTests : IntegrationTest
     {
+        [Fact]
         public async Task GetAll_WithoutAnyPosts_ReturnsEmptyResponse()
         {
             //Arrange
