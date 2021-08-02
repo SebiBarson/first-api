@@ -48,11 +48,9 @@ namespace Tweetbook.Installers
                 options.AddPolicy("MustWorkForChapsas", policy => policy.AddRequirements(new WorksForCompanyRequirement("chapsas.com")));
             });
 
-
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Title", Version = "v1" });
-
                 /*var security = new Dictionary<string, IEnumerable<string>>
                 {
                     {"Bearer", new string[0] }
