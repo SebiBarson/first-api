@@ -43,7 +43,7 @@ namespace Tweetbook.Services
             return created > 0;
         }
 
-        public async Task<bool> CreatePost_TagAsync(PostTag post_Tag)
+        public async Task<bool> CreatePostTagAsync(PostTag post_Tag)
         {
             await _dataContext.Posts_Tags.AddAsync(post_Tag);
             var created = await _dataContext.SaveChangesAsync();

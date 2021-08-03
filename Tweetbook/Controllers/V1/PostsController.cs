@@ -10,6 +10,7 @@ using Tweetbook.Contracts.V1.Responses;
 using Tweetbook.Domain;
 using Tweetbook.Extensions;
 using Tweetbook.Services;
+using AutoMapper;
 
 namespace Tweetbook.Controllers.V1
 {
@@ -18,17 +19,21 @@ namespace Tweetbook.Controllers.V1
     {
         private readonly IPostService _postService;
         private readonly ITagService _tagService;
+        private readonly IMapper _mapper;
 
-        public PostsController(IPostService postService, ITagService tagService)
+        public PostsController(IPostService postService, ITagService tagService, IMapper mapper)
         {
             _postService = postService;
             _tagService = tagService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetPostsAsync());
+            var posts = await _postService.GetPostsAsync();
+            var postResponses = _mapper.Map<List<PostResponse>>(posts);
+            return Ok(postResponses);
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
@@ -39,7 +44,7 @@ namespace Tweetbook.Controllers.V1
             if (post == null)
                 return NotFound();
 
-            return Ok(post);
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpPut(ApiRoutes.Posts.Update)]
@@ -56,7 +61,7 @@ namespace Tweetbook.Controllers.V1
                 Name = request.Name
             };
             var updated = await _postService.UpdatePostAsync(post);
-            return Ok(post);
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]
@@ -96,11 +101,10 @@ namespace Tweetbook.Controllers.V1
 
             foreach (Tag tag in tags)
             {
-                await _tagService.CreatePost_TagAsync(new PostTag { PostId = post.Id, TagId = tag.Id });
+                await _tagService.CreatePostTagAsync(new PostTag { PostId = post.Id, TagId = tag.Id });
             }
 
-            var response = new PostResponse { Id = post.Id };
-            return Created(UriLocation(post), response);
+            return Created(UriLocation(post), _mapper.Map<PostResponse>(post));
         }
 
         private string UriLocation(Post post)

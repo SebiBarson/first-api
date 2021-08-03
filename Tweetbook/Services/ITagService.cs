@@ -10,6 +10,6 @@ namespace Tweetbook.Services
         public Task<bool> CreateTagAsync(Tag tag);
         public Task<List<Tag>> GetAllTagsAsync();
         public Task<List<Tag>> GetTagsForPostAsync(Guid postId);
-        public Task<bool> CreatePost_TagAsync(PostTag post_Tag);
+        public Task<bool> CreatePostTagAsync(PostTag post_Tag);
     }
 }
