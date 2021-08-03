@@ -13,9 +13,11 @@ namespace Tweetbook.Installers
         {
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+            services.AddIdentityCore<IdentityUser>().AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<DataContext>();
 
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<ITagService, TagService>();
         }
     }
 }

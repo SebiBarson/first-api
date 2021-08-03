@@ -10,8 +10,21 @@ namespace Tweetbook.Data
             : base(options)
         {
         }
-
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<PostTag>()
+                .HasOne(p => p.Post)
+                .WithMany(pt => pt.Post_Tags)
+                .HasForeignKey(ti => ti.PostId);
+            builder.Entity<PostTag>()
+                .HasOne(p => p.Tag)
+                .WithMany(pt => pt.Post_Tags)
+                .HasForeignKey(ti => ti.TagId);
+        }
         public DbSet<Post> Posts { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<PostTag> Posts_Tags { get; set; }
     }
 }
