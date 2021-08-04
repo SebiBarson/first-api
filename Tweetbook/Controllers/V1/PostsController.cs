@@ -55,7 +55,7 @@ namespace Tweetbook.Controllers.V1
                 Id = postId,
                 Name = request.Name
             };
-            var updated = await _postService.UpdatePostAsync(post);
+            await _postService.UpdatePostAsync(post);
             return Ok(post);
         }
 

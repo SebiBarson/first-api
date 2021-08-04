@@ -48,9 +48,6 @@ namespace Tweetbook.IntegrationTests
             string registrationResponse = await response.Content.ReadAsStringAsync();
             AuthSuccessResponse resp = JsonConvert.DeserializeObject<AuthSuccessResponse>(registrationResponse);
             return resp.Token;
-
-            var registrationResponse1 = await response.Content.ReadAsAsync<AuthSuccessResponse>();
-            return registrationResponse1.Token;
         }
 
         protected async Task<PostResponse> CreatePostAsync(CreatePostRequest request)
