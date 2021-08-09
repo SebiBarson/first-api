@@ -1,30 +1,58 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tweetbook.Contracts.V1;
+using Tweetbook.Contracts.V1.Requests;
+using Tweetbook.Contracts.V1.Responses;
+using Tweetbook.Domain;
+using Tweetbook.Extensions;
 using Tweetbook.Services;
 
 namespace Tweetbook.Controllers.V1
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TagsController : Controller
     {
         private readonly ITagService _tagService;
-        public TagsController(ITagService tagService)
+        private readonly IMapper _mapper;
+        public TagsController(ITagService tagService, IMapper mapper)
         {
             _tagService = tagService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Tags.GetAll)]
-        [Authorize(Policy = "MustWorkForChapsas")]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _tagService.GetAllTagsAsync());
+            var tags = await _tagService.GetAllTagsAsync();
+            return Ok(_mapper.Map<List<TagResponse>>(tags));
         }
-        public IActionResult Ping()
+
+        [HttpGet(ApiRoutes.Tags.Get)]
+        public async Task<IActionResult> Get([FromRoute] Guid tagId)
         {
-            return Ok("pong");
+            var tag = await _tagService.GetTagByIdAsync(tagId);
+            if (tag == null)
+                return NotFound(new ErrorResponse { Errors = new List<ErrorModel> { new ErrorModel { Message = "Not found" } } });
+            return Ok(_mapper.Map<TagResponse>(tag));
+        }
+
+
+        [HttpPost(ApiRoutes.Tags.Create)]
+        public async Task<IActionResult> Create([FromBody] CreateTagRequest request)
+        {
+            var tag = new Tag { Name = request.Name, CreatorId = HttpContext.GetUserId(), CreatedOn = DateTime.Now };
+            var created = await _tagService.CreateTagAsync(tag);
+            if (!created)
+                return BadRequest(new ErrorResponse { Errors = new List<ErrorModel> { new ErrorModel { Message = "Unable to create a tag" } } });
+            return Created(UriLocation(tag), _mapper.Map<TagResponse>(tag));
+        }
+        private string UriLocation(Tag tag)
+        {
+            var baseUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.ToUriComponent();
+            var uriLocation = baseUrl + "/" + ApiRoutes.Tags.Get.Replace("{tagId}", tag.Id.ToString());
+            return uriLocation;
         }
     }
 }

@@ -18,6 +18,6 @@ namespace Tweetbook.Domain
         [ForeignKey(nameof(UserId))]
         public IdentityUser User { get; set; }
 
-        public List<PostTag> Post_Tags { get; set; }
+        public List<PostTag> Tags { get; set; }
     }
 }

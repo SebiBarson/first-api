@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tweetbook.Installers;
+using Tweetbook.Options;
 
 namespace Tweetbook
 {
@@ -18,8 +19,8 @@ namespace Tweetbook
         public void ConfigureServices(IServiceCollection services)
         {
             services.InstallServicesInAssembly(Configuration);
+            services.AddAutoMapper(typeof(Startup));
         }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -30,29 +31,28 @@ namespace Tweetbook
             {
                 app.UseHsts();
             }
-
-            var swaggerOptions = new Tweetbook.Options.SwaggerOptions();
-            Configuration.GetSection(nameof(swaggerOptions)).Bind(swaggerOptions);
-            app.UseSwagger(options =>
+            var swaggerOptions = new SwaggerOptions();
+            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+            app.UseSwagger(option =>
             {
-                options.RouteTemplate = swaggerOptions.JsonRoute;
+                option.RouteTemplate = swaggerOptions.JsonRoute;
             });
-            app.UseSwaggerUI(options =>
+            app.UseSwaggerUI(option =>
             {
-                options.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
+                option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
             });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
-            });
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            });
         }
     }
 }

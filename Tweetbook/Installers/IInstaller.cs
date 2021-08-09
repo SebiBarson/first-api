@@ -5,6 +5,6 @@ namespace Tweetbook.Installers
 {
     public interface IInstaller
     {
-        void InstallServices(IServiceCollection services, IConfiguration configuration);
+        void InstallServices(IConfiguration configuration, IServiceCollection services);
     }
 }

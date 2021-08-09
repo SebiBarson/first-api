@@ -17,18 +17,19 @@ namespace Tweetbook
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
                 await dbContext.Database.MigrateAsync();
+
                 var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 if (!await roleManager.RoleExistsAsync("Admin"))
                 {
                     var adminRole = new IdentityRole("Admin");
                     await roleManager.CreateAsync(adminRole);
                 }
-                if (!await roleManager.RoleExistsAsync("Poster"))
+                if (!await roleManager.RoleExistsAsync("Standard"))
                 {
-                    var posterRole = new IdentityRole("Poster");
-                    await roleManager.CreateAsync(posterRole);
+                    var standardRole = new IdentityRole("Standard");
+                    await roleManager.CreateAsync(standardRole);
                 }
-            };
+            }
             await host.RunAsync();
         }
 

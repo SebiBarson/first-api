@@ -9,13 +9,12 @@ namespace Tweetbook.Installers
 {
     public class DBInstaller : IInstaller
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration)
+        public void InstallServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentityCore<IdentityUser>().AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
-
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<ITagService, TagService>();
         }

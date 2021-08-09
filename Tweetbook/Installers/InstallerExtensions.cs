@@ -11,8 +11,7 @@ namespace Tweetbook.Installers
         {
             var installers = typeof(Startup).Assembly.ExportedTypes.Where(installerType =>
                 typeof(IInstaller).IsAssignableFrom(installerType) && !installerType.IsAbstract).Select(Activator.CreateInstance).Cast<IInstaller>().ToList();
-
-            installers.ForEach(installer => installer.InstallServices(services, configuration));
+            installers.ForEach(installer => installer.InstallServices(configuration, services));
         }
     }
 }

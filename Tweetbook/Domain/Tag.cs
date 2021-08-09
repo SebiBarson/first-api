@@ -16,7 +16,7 @@ namespace Tweetbook.Domain
         [ForeignKey(nameof(CreatorId))]
         public IdentityUser CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
-        public List<PostTag> Post_Tags { get; set; }
+        public List<PostTag> PostTags { get; set; }
 
     }
 }

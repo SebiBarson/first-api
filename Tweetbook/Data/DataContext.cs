@@ -15,11 +15,11 @@ namespace Tweetbook.Data
             base.OnModelCreating(builder);
             builder.Entity<PostTag>()
                 .HasOne(p => p.Post)
-                .WithMany(pt => pt.Post_Tags)
+                .WithMany(pt => pt.Tags)
                 .HasForeignKey(ti => ti.PostId);
             builder.Entity<PostTag>()
                 .HasOne(p => p.Tag)
-                .WithMany(pt => pt.Post_Tags)
+                .WithMany(pt => pt.PostTags)
                 .HasForeignKey(ti => ti.TagId);
         }
         public DbSet<Post> Posts { get; set; }

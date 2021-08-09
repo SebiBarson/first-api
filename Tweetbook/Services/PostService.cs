@@ -14,60 +14,55 @@ namespace Tweetbook.Services
         {
             _dataContext = dataContext;
         }
-        public async Task<List<Post>> GetPostsAsync()
+        public async Task<bool> CreatePostAsync(Post post)
         {
-            return await _dataContext.Posts.ToListAsync();
+            await _dataContext.Posts.AddAsync(post);
+            var created = await _dataContext.SaveChangesAsync();
+            return created > 0;
         }
-        public async Task<Post> GetPostByIdAsync(Guid postId)
-        {
-            return await _dataContext.Posts.AsNoTracking().SingleOrDefaultAsync(current_post => current_post.Id == postId);
-        }
-
-        public async Task<bool> UpdatePostAsync(Post postToUpdate)
-        {
-            var temp = await GetPostByIdAsync(postToUpdate.Id);
-            if (temp != null)
-            {
-                //temp.Name = postToUpdate.Name;
-                _dataContext.Update(postToUpdate);
-                var updated = await _dataContext.SaveChangesAsync();
-                return true;
-            }
-            else
-            {
-                return await CreatePostAsync(postToUpdate);
-            }
-
-        }
-
         public async Task<bool> DeletePostAsync(Guid postId)
         {
             var post = await GetPostByIdAsync(postId);
             if (post == null)
+            {
                 return false;
-
+            }
             _dataContext.Posts.Remove(post);
             var deleted = await _dataContext.SaveChangesAsync();
-
             return deleted > 0;
         }
-
-        public async Task<bool> CreatePostAsync(Post post)
+        public async Task<Post> GetPostByIdAsync(Guid postId)
         {
-            await _dataContext.AddAsync(post);
-            var created = await _dataContext.SaveChangesAsync();
-            return created > 0;
+            return await _dataContext.Posts.Include(p => p.Tags).ThenInclude(pt => pt.Tag).SingleOrDefaultAsync(x => x.Id == postId);
         }
-
-        public async Task<bool> UserOwnsPostAsync(Guid postId, string userId)
+        public async Task<List<Post>> GetPostsAsync()
         {
-            var post = await _dataContext.Posts.AsNoTracking().SingleOrDefaultAsync(current_post => current_post.Id == postId);
-
+            List<Post> posts = await _dataContext.Posts.Include(p => p.Tags).ThenInclude(pt => pt.Tag).ToListAsync();
+            return posts;
+        }
+        public async Task<bool> UpdatePostAsync(Post postToUpdate)
+        {
+            var post = await GetPostByIdAsync(postToUpdate.Id);
             if (post == null)
+            {
                 return false;
-            if (post.UserId != userId)
-                return false;
+            }
+            post.Name = postToUpdate.Name;
+            var updated = await _dataContext.SaveChangesAsync();
+            return updated > 0;
 
+        }
+        public async Task<bool> UserOwnsPostAsync(Guid postId, string getUserId)
+        {
+            var post = await _dataContext.Posts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == postId);
+            if (post == null)
+            {
+                return false;
+            }
+            if (post.UserId != getUserId)
+            {
+                return false;
+            }
             return true;
         }
     }
